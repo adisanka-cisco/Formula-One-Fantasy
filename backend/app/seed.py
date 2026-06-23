@@ -290,6 +290,9 @@ def seed():
             driver.active = True
             driver_by_code[code] = driver
 
+        active_driver_codes = [code for code, *_ in DRIVERS]
+        db.query(Driver).filter(~Driver.driver_code.in_(active_driver_codes)).update({Driver.active: False}, synchronize_session=False)
+
         race_by_round = {}
         for season, round_number, name, circuit, country, race_date, status in RACES:
             race = db.query(Race).filter(Race.season == season, Race.round == round_number).first()
