@@ -15,8 +15,8 @@ depends_on = None
 
 
 def upgrade():
-    op.add_column("drivers", sa.Column("image_url", sa.String(length=800), nullable=True))
-    op.add_column("races", sa.Column("thumbnail_url", sa.String(length=800), nullable=True))
+    op.add_column("drivers", sa.Column("image_url", sa.String(length=4000), nullable=True))
+    op.add_column("races", sa.Column("thumbnail_url", sa.String(length=4000), nullable=True))
 
 
 def downgrade():

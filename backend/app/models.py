@@ -59,7 +59,7 @@ class Driver(Base):
     driver_code = Column(String(8), unique=True, nullable=False, index=True)
     first_name = Column(String(120), nullable=False)
     last_name = Column(String(120), nullable=False)
-    image_url = Column(String(800))
+    image_url = Column(String(4000))
     active = Column(Boolean, nullable=False, default=True)
 
     team = relationship("Team", back_populates="drivers")
@@ -76,7 +76,7 @@ class Race(Base):
     circuit_name = Column(String(160), nullable=False)
     country = Column(String(120), nullable=False)
     race_date = Column(Date, nullable=False)
-    thumbnail_url = Column(String(800))
+    thumbnail_url = Column(String(4000))
     status = Column(String(40), nullable=False, default="scheduled")
 
     predictions = relationship("Prediction", back_populates="race")
