@@ -1,0 +1,25 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: formula-postgres
+  namespace: database
+spec:
+  instances: 2
+  imageName: ghcr.io/cloudnative-pg/postgresql:16
+  enableSuperuserAccess: true
+  superuserSecret:
+    name: formula-db-superuser
+  bootstrap:
+    initdb:
+      database: formula_fantasy
+      owner: formula_app
+      secret:
+        name: formula-db-app
+  storage:
+    size: 5Gi
+  affinity:
+    enablePodAntiAffinity: true
+    podAntiAffinityType: required
+    topologyKey: kubernetes.io/hostname
+  monitoring:
+    enablePodMonitor: false

@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: formula-worker
+  namespace: formula-one-fantasy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: formula-worker
+  template:
+    metadata:
+      labels:
+        app: formula-worker
+    spec:
+      nodeSelector:
+        role: formula-backup
+      containers:
+        - name: worker
+          image: formula-worker:latest
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: formula-app-secrets
+                  key: DATABASE_URL
+

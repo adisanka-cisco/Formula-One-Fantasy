@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: formula-app
+  namespace: formula-one-fantasy
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: formula.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: formula-frontend
+                port:
+                  number: 80
+

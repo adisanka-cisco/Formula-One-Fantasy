@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: formula-ai-assistant
+  namespace: formula-one-fantasy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: formula-ai-assistant
+  template:
+    metadata:
+      labels:
+        app: formula-ai-assistant
+    spec:
+      containers:
+        - name: assistant
+          image: formula-ai-assistant:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8001
+          env:
+            - name: OPENAI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: formula-app-secrets
+                  key: OPENAI_API_KEY
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8001
+            initialDelaySeconds: 5
+            periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: formula-ai-assistant
+  namespace: formula-one-fantasy
+spec:
+  selector:
+    app: formula-ai-assistant
+  ports:
+    - port: 8001
+      targetPort: 8001
+

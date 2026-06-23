@@ -1,0 +1,9 @@
+resources:
+  - namespaces.yaml
+  - secrets.example.yaml
+  - postgres.yaml
+  - backend.yaml
+  - ai-assistant.yaml
+  - frontend.yaml
+  - worker.yaml
+  - ingress.yaml

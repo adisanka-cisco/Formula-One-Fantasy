@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: formula-api
+  namespace: formula-one-fantasy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: formula-api
+  template:
+    metadata:
+      labels:
+        app: formula-api
+    spec:
+      nodeSelector:
+        role: formula-primary
+      containers:
+        - name: api
+          image: formula-api:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: formula-app-secrets
+                  key: DATABASE_URL
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: formula-app-secrets
+                  key: JWT_SECRET
+            - name: AI_ASSISTANT_URL
+              value: http://formula-ai-assistant:8001
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: formula-api
+  namespace: formula-one-fantasy
+spec:
+  selector:
+    app: formula-api
+  ports:
+    - port: 8000
+      targetPort: 8000
+

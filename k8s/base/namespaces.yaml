@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: formula-one-fantasy
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: database
+
