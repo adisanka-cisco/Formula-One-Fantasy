@@ -57,6 +57,7 @@ class DriverResponse(BaseModel):
     driver_code: str
     first_name: str
     last_name: str
+    image_url: Optional[str] = None
     active: bool
 
     class Config:
@@ -71,6 +72,7 @@ class RaceResponse(BaseModel):
     circuit_name: str
     country: str
     race_date: date
+    thumbnail_url: Optional[str] = None
     status: str
 
     class Config:
@@ -142,4 +144,3 @@ class AssistantRequest(BaseModel):
 class AssistantResponse(BaseModel):
     advice: str
     model_enabled: bool
-

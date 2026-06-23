@@ -115,6 +115,7 @@ function App() {
               setMessage={setMessage}
             />
           )}
+          <DriverGallery drivers={drivers} teams={teams} />
           <AssistantPanel race={selectedRace} token={token} setMessage={setMessage} />
           <AdminResults race={selectedRace} drivers={drivers} teams={teams} token={token} setMessage={setMessage} reload={loadPublicData} />
         </section>
@@ -209,6 +210,7 @@ function RaceTabs({ races, selectedRaceId, setSelectedRaceId }) {
           className={String(race.id) === String(selectedRaceId) ? "active" : ""}
           onClick={() => setSelectedRaceId(String(race.id))}
         >
+          {race.thumbnail_url && <img src={race.thumbnail_url} alt="" />}
           <span>Round {race.round}</span>
           <strong>{race.race_name}</strong>
         </button>
@@ -238,12 +240,16 @@ function PredictionPanel({ race, drivers, teams, token, reload, setMessage }) {
   }, [race.id, drivers.length, teams.length]);
 
   function driverSelect(value, onChange) {
+    const selected = drivers.find((driver) => String(driver.id) === String(value));
     return (
-      <select value={value} onChange={(event) => onChange(event.target.value)}>
-        {drivers.map((driver) => (
-          <option key={driver.id} value={driver.id}>{driver.driver_code} - {driver.first_name} {driver.last_name}</option>
-        ))}
-      </select>
+      <div className="driverPick">
+        {selected && <img src={selected.image_url} alt={`${selected.first_name} ${selected.last_name}`} />}
+        <select value={value} onChange={(event) => onChange(event.target.value)}>
+          {drivers.map((driver) => (
+            <option key={driver.id} value={driver.id}>{driver.driver_code} - {driver.first_name} {driver.last_name}</option>
+          ))}
+        </select>
+      </div>
     );
   }
 
@@ -292,6 +298,7 @@ function PredictionPanel({ race, drivers, teams, token, reload, setMessage }) {
         </div>
         <button onClick={submit}>Submit picks</button>
       </div>
+      {race.thumbnail_url && <img className="racePreview" src={race.thumbnail_url} alt="" />}
       <div className="predictionGrid">
         <label>Race winner {driverSelect(winner, setWinner)}</label>
         <label>Top team {teamSelect(topTeam, setTopTeam)}</label>
@@ -308,6 +315,37 @@ function PredictionPanel({ race, drivers, teams, token, reload, setMessage }) {
       <div className="positionGrid">
         {top10.map((driverId, index) => (
           <label key={index}>P{index + 1} {driverSelect(driverId, (value) => setTop10(updateList(top10, index, value)))}</label>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function DriverGallery({ drivers, teams }) {
+  const teamById = useMemo(() => {
+    const lookup = {};
+    teams.forEach((team) => {
+      lookup[team.id] = team.short_name;
+    });
+    return lookup;
+  }, [teams]);
+
+  return (
+    <section className="panel">
+      <div className="panelHeader">
+        <h2>Driver Pool</h2>
+        <p>{drivers.length} drivers · {teams.length} teams</p>
+      </div>
+      <div className="driverGrid">
+        {drivers.map((driver) => (
+          <article key={driver.id}>
+            <img src={driver.image_url} alt={`${driver.first_name} ${driver.last_name}`} />
+            <div>
+              <strong>{driver.driver_code}</strong>
+              <span>{driver.first_name} {driver.last_name}</span>
+              <small>{teamById[driver.team_id]}</small>
+            </div>
+          </article>
         ))}
       </div>
     </section>
@@ -390,7 +428,7 @@ function AdminResults({ race, drivers, teams, token, setMessage, reload }) {
       <div className="predictionGrid">
         <label>Winner
           <select value={winnerDriver} onChange={(event) => setWinnerDriver(event.target.value)}>
-            {drivers.map((driver) => <option key={driver.id} value={driver.id}>{driver.driver_code}</option>)}
+            {drivers.map((driver) => <option key={driver.id} value={driver.id}>{driver.driver_code} - {driver.first_name} {driver.last_name}</option>)}
           </select>
         </label>
         <label>Top constructor
@@ -404,4 +442,3 @@ function AdminResults({ race, drivers, teams, token, setMessage, reload }) {
 }
 
 render(<App />, document.getElementById("root"));
-
